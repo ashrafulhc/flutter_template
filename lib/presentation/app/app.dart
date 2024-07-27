@@ -1,18 +1,25 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/presentation/features/home/home.dart';
+import 'package:flutter_template/presentation/injection/injector.dart';
+import 'package:flutter_template/presentation/routes/router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    final appRouter = injector.get<AppRouter>();
+
+    return MaterialApp.router(
+      title: 'Flutter Template',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: HomeScreen(),
+      routerDelegate: AutoRouterDelegate(
+        appRouter,
+      ),
+      routeInformationParser: appRouter.defaultRouteParser(),
     );
   }
 }
