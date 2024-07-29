@@ -1,5 +1,5 @@
 import 'package:flutter_template/presentation/app/app_flavor.dart';
-import 'package:flutter_template/presentation/injection/injector.dart';
+import 'package:flutter_template/injection/injector.dart';
 import 'package:flutter_template/presentation/routes/router.dart';
 
 class DependencyManager {

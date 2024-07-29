@@ -1,5 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_template/injection/injector.dart';
+import 'package:flutter_template/presentation/features/settings/cubit/settings_cubit.dart';
+import 'package:flutter_template/presentation/features/settings/ui/settings_body.dart';
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {
@@ -7,11 +11,9 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: const Center(
-        child: Text('Settings Page'),
-      ),
+    return BlocProvider<SettingsCubit>(
+      create: (context) => injector(),
+      child: const SettingsBody(),
     );
   }
 }
