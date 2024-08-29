@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/presentation/features/settings/cubit/settings_cubit.dart';
+import 'package:flutter_template/presentation/resources/resources.dart';
 
 class SettingsBody extends StatelessWidget {
   const SettingsBody({super.key});
@@ -14,6 +15,7 @@ class SettingsBody extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: context.colors.background,
         title: const Text('Settings'),
       ),
       body: Center(
