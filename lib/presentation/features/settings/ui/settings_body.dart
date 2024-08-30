@@ -1,6 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_template/presentation/features/_playground/playground_screen.dart';
 import 'package:flutter_template/presentation/features/settings/cubit/settings_cubit.dart';
+import 'package:flutter_template/presentation/routes/router.gr.dart';
 
 class SettingsBody extends StatelessWidget {
   const SettingsBody({super.key});
@@ -15,6 +18,9 @@ class SettingsBody extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
+        actions: const [
+          PlaygroundScreenOpenerButton(),
+        ],
       ),
       body: Center(
         child: isLoading

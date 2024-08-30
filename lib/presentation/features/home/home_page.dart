@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_template/presentation/resources/resources.dart';
 
 @RoutePage()
 class HomePage extends StatelessWidget {
@@ -8,7 +9,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        backgroundColor: context.colors.background,
+      ),
       body: const Padding(
         padding: EdgeInsets.fromLTRB(24, 0, 24, 24),
         child: Stack(

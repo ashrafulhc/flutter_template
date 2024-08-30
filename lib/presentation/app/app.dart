@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_template/injection/injector.dart';
+import 'package:flutter_template/presentation/resources/resources.dart';
 import 'package:flutter_template/presentation/routes/router.dart';
 
 class App extends StatelessWidget {
@@ -11,11 +12,13 @@ class App extends StatelessWidget {
     final appRouter = injector.get<AppRouter>();
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.fromBrightness(Brightness.light),
+      darkTheme: AppTheme.fromBrightness(Brightness.dark),
+      // TODO: Set to [ThemeMode.light] if your app only supports light mode
+      themeMode: ThemeMode.system,
       title: 'Flutter Template',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-      ),
+
       routerDelegate: AutoRouterDelegate(
         appRouter,
       ),
