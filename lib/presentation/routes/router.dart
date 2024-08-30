@@ -25,5 +25,9 @@ class AppRouter extends $AppRouter {
             ),
           ],
         ),
+        AutoRoute(
+          page: PlaygroundRoute.page,
+          path: '/playground',
+        ),
       ];
 }

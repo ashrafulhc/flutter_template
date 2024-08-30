@@ -20,6 +20,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   dio: ^5.5.0
   theme_tailor_annotation: ^3.0.1
+  flutter_sticky_header: ^0.6.5
 
 dev_dependencies:
   flutter_test:
