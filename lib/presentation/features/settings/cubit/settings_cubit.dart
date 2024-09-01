@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/data/response_objects/response_error.dart';
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
 import 'package:flutter_template/domain/usecases/todo/get_todo_use_case.dart';
-import 'package:flutter_template/presentation/common/base_status/base_status.dart';
+import 'package:flutter_template/domain/common/base_status/base_status.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
