@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
+import 'package:flutter_template/data/response_objects/todo_response/todo_response.dart';
 import 'package:flutter_template/injection/network_module.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
@@ -15,5 +15,5 @@ abstract class TodoRemoteDataSource {
   ) = _TodoRemoteDataSource;
 
   @GET('/todos/1')
-  Future<TodoEntity> getTodo();
+  Future<TodoResponse> getTodo();
 }

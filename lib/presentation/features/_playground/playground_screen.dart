@@ -258,11 +258,11 @@ class PlaygroundScreenOpenerButton extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return AppButton.text(
-      label: 'Open Playground Screen',
+    return IconButton(
       onPressed: () => context.pushRoute(
         const PlaygroundRoute(),
       ),
+      icon: const Icon(Icons.play_arrow),
     );
   }
 }
