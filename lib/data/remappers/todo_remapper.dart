@@ -2,7 +2,7 @@ import 'package:flutter_template/data/response_objects/todo_response/todo_respon
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
 import 'package:injectable/injectable.dart';
 
-@injectable
+@lazySingleton
 class TodoRemapper {
   TodoEntity toTodoEntity(TodoResponse response) {
     final todoEntity = TodoEntity(

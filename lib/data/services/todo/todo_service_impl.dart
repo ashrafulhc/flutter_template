@@ -4,7 +4,7 @@ import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
 import 'package:flutter_template/domain/services/todo/todo_service.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: TodoService)
+@LazySingleton(as: TodoService)
 class TodoServiceImpl implements TodoService {
   final TodoRemoteDataSource _todoRemoteDataSource;
   final TodoRemapper _todoRemapper;
