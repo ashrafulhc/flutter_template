@@ -27,7 +27,7 @@ If Flutter is not installed, follow the [official installation guide](https://fl
 Clone the project from the repository:
 
 ```bash
-git git@github.com:ashrafulhc/flutter_template.git
+git clone git@github.com:ashrafulhc/flutter_template.git
 cd flutter_template
 ```
 
