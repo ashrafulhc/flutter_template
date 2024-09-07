@@ -28,6 +28,11 @@ Clone the project from the repository:
 
 ```bash
 git clone git@github.com:ashrafulhc/flutter_template.git
+```
+
+Navigate to the project:
+
+```bash
 cd flutter_template
 ```
 
