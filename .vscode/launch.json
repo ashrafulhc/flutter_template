@@ -9,6 +9,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main_development.dart",
+            "noDebug": true,
             "args": [
                 "--flavor",
                 "development"
@@ -19,6 +20,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main_staging.dart",
+            "noDebug": true,
             "args": [
                 "--flavor",
                 "staging"
@@ -29,6 +31,7 @@
             "request": "launch",
             "type": "dart",
             "program": "lib/main_production.dart",
+            "noDebug": true,
             "args": [
                 "--flavor",
                 "production"

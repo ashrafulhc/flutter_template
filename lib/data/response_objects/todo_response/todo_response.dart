@@ -4,7 +4,7 @@ part 'todo_response.freezed.dart';
 part 'todo_response.g.dart';
 
 @freezed
-class TodoResponse with _$TodoResponse {
+abstract class TodoResponse with _$TodoResponse {
   const factory TodoResponse({
     int? userId,
     int? id,

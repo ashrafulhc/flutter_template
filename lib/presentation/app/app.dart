@@ -1,16 +1,12 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/injection/injector.dart';
 import 'package:flutter_template/presentation/resources/resources.dart';
-import 'package:flutter_template/presentation/routes/router.dart';
+import 'package:flutter_template/presentation/routes/app_router.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final appRouter = injector.get<AppRouter>();
-
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: AppTheme.fromBrightness(Brightness.light),
@@ -18,11 +14,7 @@ class App extends StatelessWidget {
       // TODO: Set to [ThemeMode.light] if your app only supports light mode
       themeMode: ThemeMode.system,
       title: 'Flutter Template',
-
-      routerDelegate: AutoRouterDelegate(
-        appRouter,
-      ),
-      routeInformationParser: appRouter.defaultRouteParser(),
+      routerConfig: appRouter,
     );
   }
 }

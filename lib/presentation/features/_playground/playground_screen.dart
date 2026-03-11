@@ -1,12 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:flutter_template/presentation/resources/app_colors.dart';
 import 'package:flutter_template/presentation/resources/app_ui_constants.dart';
-import 'package:flutter_template/presentation/routes/router.gr.dart';
+import 'package:flutter_template/presentation/routes/app_router.dart';
 import 'package:flutter_template/presentation/widgets/button/app_button.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_template/presentation/widgets/text/app_text.dart';
 import 'package:flutter_template/presentation/widgets/utilities/app_screen_config.dart';
 
@@ -17,7 +16,6 @@ import 'package:flutter_template/presentation/widgets/utilities/app_screen_confi
 ///
 /// If you need to extract some small widgets only for this playground screen,
 /// consider using the private modifier for widget classes.
-@RoutePage()
 class PlaygroundScreen extends StatelessWidget {
   const PlaygroundScreen({super.key});
 
@@ -259,9 +257,7 @@ class PlaygroundScreenOpenerButton extends StatelessWidget {
     }
 
     return IconButton(
-      onPressed: () => context.pushRoute(
-        const PlaygroundRoute(),
-      ),
+      onPressed: () => context.push(AppRoutes.playground),
       icon: const Icon(Icons.play_arrow),
     );
   }

@@ -4,7 +4,7 @@ part 'todo_entity.freezed.dart';
 part 'todo_entity.g.dart';
 
 @freezed
-class TodoEntity with _$TodoEntity {
+abstract class TodoEntity with _$TodoEntity {
   const factory TodoEntity({
     int? userId,
     int? id,

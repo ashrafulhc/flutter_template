@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_template/presentation/routes/router.gr.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_template/presentation/routes/app_router.dart';
 
-@RoutePage()
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(milliseconds: 1500), () {
-      context.router.replace(const MainRoute());
+      context.go('${AppRoutes.main}/${AppRoutes.home}');
     });
   }
 
