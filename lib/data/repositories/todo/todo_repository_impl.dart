@@ -1,15 +1,15 @@
 import 'package:flutter_template/data/remappers/todo_remapper.dart';
 import 'package:flutter_template/data/services/todo/source/remote/todo_remote_data_source.dart';
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
-import 'package:flutter_template/domain/services/todo/todo_service.dart';
+import 'package:flutter_template/domain/repositories/todo/todo_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: TodoService)
-class TodoServiceImpl implements TodoService {
+@LazySingleton(as: TodoRepository)
+class TodoRepositoryImpl implements TodoRepository {
   final TodoRemoteDataSource _todoRemoteDataSource;
   final TodoRemapper _todoRemapper;
 
-  TodoServiceImpl(
+  TodoRepositoryImpl(
     this._todoRemoteDataSource,
     this._todoRemapper,
   );
