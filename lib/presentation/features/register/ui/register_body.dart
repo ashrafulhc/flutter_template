@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_template/presentation/features/login/cubit/login_cubit.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_template/presentation/features/register/cubit/register_cubit.dart';
 import 'package:flutter_template/presentation/routes/app_router.dart';
+import 'package:go_router/go_router.dart';
 
-class LoginBody extends StatelessWidget {
-  const LoginBody({super.key});
+class RegisterBody extends StatelessWidget {
+  const RegisterBody({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final emailError = context.select((LoginCubit c) => c.state.emailError);
+    final emailError =
+        context.select((RegisterCubit c) => c.state.emailError);
     final passwordError =
-        context.select((LoginCubit c) => c.state.passwordError);
+        context.select((RegisterCubit c) => c.state.passwordError);
+    final confirmPasswordError =
+        context.select((RegisterCubit c) => c.state.confirmPasswordError);
 
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocListener<RegisterCubit, RegisterState>(
       listenWhen: (previous, current) =>
           previous.initStatus != current.initStatus,
       listener: (context, state) {
@@ -23,7 +26,7 @@ class LoginBody extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Login'),
+          title: const Text('Register'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -37,31 +40,41 @@ class LoginBody extends StatelessWidget {
                   errorText: emailError,
                 ),
                 onChanged: (value) =>
-                    context.read<LoginCubit>().onEmailChanged(value),
+                    context.read<RegisterCubit>().onEmailChanged(value),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                obscureText: true,
+                textInputAction: TextInputAction.next,
+                decoration: InputDecoration(
+                  hintText: 'Enter password',
+                  errorText: passwordError,
+                ),
+                onChanged: (value) =>
+                    context.read<RegisterCubit>().onPasswordChanged(value),
               ),
               const SizedBox(height: 8),
               TextField(
                 obscureText: true,
                 textInputAction: TextInputAction.done,
                 decoration: InputDecoration(
-                  hintText: 'Enter password',
-                  errorText: passwordError,
+                  hintText: 'Confirm password',
+                  errorText: confirmPasswordError,
                 ),
                 onChanged: (value) =>
-                    context.read<LoginCubit>().onPasswordChanged(value),
+                    context.read<RegisterCubit>().onConfirmPasswordChanged(value),
               ),
               const SizedBox(height: 20),
-              BlocBuilder<LoginCubit, LoginState>(
+              BlocBuilder<RegisterCubit, RegisterState>(
                 buildWhen: (prev, curr) => prev.initStatus != curr.initStatus,
                 builder: (context, state) {
                   final isLoading = state.initStatus.isLoading;
-
                   return ElevatedButton(
                     onPressed: isLoading
                         ? null
-                        : () => context.read<LoginCubit>().onSubmit(),
+                        : () => context.read<RegisterCubit>().onSubmit(),
                     child: Text(
-                      isLoading ? 'Loading...' : 'Submit',
+                      isLoading ? 'Loading...' : 'Register',
                       style: const TextStyle(color: Colors.white),
                     ),
                   );
@@ -69,8 +82,8 @@ class LoginBody extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               TextButton(
-                onPressed: () => context.push(AppRoutes.register),
-                child: const Text("Don't have an account? Register"),
+                onPressed: () => context.pop(),
+                child: const Text('Already have an account? Login'),
               ),
             ],
           ),
