@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/domain/common/base_status/base_status.dart';
+import 'package:flutter_template/domain/usecases/auth/register_use_case.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 
@@ -8,7 +10,9 @@ part 'register_cubit.freezed.dart';
 
 @injectable
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit() : super(const RegisterState());
+  final RegisterUseCase _registerUseCase;
+
+  RegisterCubit(this._registerUseCase) : super(const RegisterState());
 
   static final _emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
@@ -68,10 +72,17 @@ class RegisterCubit extends Cubit<RegisterState> {
     if (state.initStatus.isLoading) return;
 
     emit(state.copyWith(initStatus: const BaseStatus.loading()));
-    await Future.delayed(const Duration(seconds: 2));
 
-    if (isClosed) return;
-
-    emit(state.copyWith(initStatus: const BaseStatus.success()));
+    try {
+      await _registerUseCase.run(
+        email: state.email,
+        password: state.password,
+      );
+      if (isClosed) return;
+      emit(state.copyWith(initStatus: const BaseStatus.success()));
+    } on ResponseError catch (e) {
+      if (isClosed) return;
+      emit(state.copyWith(initStatus: BaseStatus.failure(e)));
+    }
   }
 }

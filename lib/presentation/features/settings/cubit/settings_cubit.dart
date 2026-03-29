@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_template/data/response_objects/response_error.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
 import 'package:flutter_template/domain/usecases/todo/get_todo_use_case.dart';
 import 'package:flutter_template/domain/common/base_status/base_status.dart';
@@ -39,14 +39,13 @@ class SettingsCubit extends Cubit<SettingsState> {
       );
 
       log('Successfuly Fetched');
-    } catch (e, s) {
+    } on ResponseError catch (e, s) {
       if (isClosed) {
         return;
       }
 
       log('Unable to Failure message $e ---- $s');
-      final error = ResponseError.from(e);
-      emit(state.copyWith(initStatus: BaseStatus.failure(error)));
+      emit(state.copyWith(initStatus: BaseStatus.failure(e)));
     }
   }
 }

@@ -1,15 +1,35 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/domain/common/base_status/base_status.dart';
+import 'package:flutter_template/domain/entities/auth/auth_entity.dart';
+import 'package:flutter_template/domain/usecases/auth/register_use_case.dart';
 import 'package:flutter_template/presentation/features/register/cubit/register_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockRegisterUseCase extends Mock implements RegisterUseCase {}
 
 void main() {
+  late MockRegisterUseCase mockRegisterUseCase;
+
+  final tEntity = AuthEntity(
+    accessToken: 'access123',
+    refreshToken: 'refresh123',
+    expiresAt: DateTime(2030),
+  );
+
+  setUp(() {
+    mockRegisterUseCase = MockRegisterUseCase();
+  });
+
+  RegisterCubit buildCubit() => RegisterCubit(mockRegisterUseCase);
+
   group('RegisterCubit', () {
     // ------------------------------------------------------------------ email
     group('onEmailChanged', () {
       blocTest<RegisterCubit, RegisterState>(
         'emits emailError when email is empty',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged(''),
         expect: () => [
           const RegisterState(email: '', emailError: 'Email is required'),
@@ -18,7 +38,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'emits emailError when email is invalid',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged('notanemail'),
         expect: () => [
           const RegisterState(
@@ -30,7 +50,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'emits null emailError when email is valid',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged('user@example.com'),
         expect: () => [
           const RegisterState(email: 'user@example.com', emailError: null),
@@ -42,16 +62,19 @@ void main() {
     group('onPasswordChanged', () {
       blocTest<RegisterCubit, RegisterState>(
         'emits passwordError when password is empty',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged(''),
         expect: () => [
-          const RegisterState(password: '', passwordError: 'Password is required'),
+          const RegisterState(
+            password: '',
+            passwordError: 'Password is required',
+          ),
         ],
       );
 
       blocTest<RegisterCubit, RegisterState>(
         'emits passwordError when password is too short',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged('short'),
         expect: () => [
           const RegisterState(
@@ -63,7 +86,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'emits null passwordError when password is valid',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged('validpassword'),
         expect: () => [
           const RegisterState(password: 'validpassword', passwordError: null),
@@ -72,7 +95,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'updates confirmPasswordError when confirm was already touched and no longer matches',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(
           confirmPassword: 'oldpass1',
           confirmPasswordError: null,
@@ -92,7 +115,7 @@ void main() {
     group('onConfirmPasswordChanged', () {
       blocTest<RegisterCubit, RegisterState>(
         'emits confirmPasswordError when confirm is empty',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onConfirmPasswordChanged(''),
         expect: () => [
           const RegisterState(
@@ -104,7 +127,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'emits confirmPasswordError when confirm does not match password',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(password: 'validpassword'),
         act: (cubit) => cubit.onConfirmPasswordChanged('differentpass'),
         expect: () => [
@@ -118,7 +141,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'emits null confirmPasswordError when confirm matches password',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(password: 'validpassword'),
         act: (cubit) => cubit.onConfirmPasswordChanged('validpassword'),
         expect: () => [
@@ -135,7 +158,7 @@ void main() {
     group('onSubmit', () {
       blocTest<RegisterCubit, RegisterState>(
         'emits field errors and does not load when all fields are untouched',
-        build: RegisterCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onSubmit(),
         expect: () => [
           const RegisterState(email: '', emailError: 'Email is required'),
@@ -158,7 +181,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'does not emit loading when email is invalid',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(
           email: 'bademail',
           password: 'validpassword',
@@ -176,7 +199,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'does not emit loading when password is too short',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(
           email: 'user@example.com',
           password: 'short',
@@ -194,7 +217,7 @@ void main() {
 
       blocTest<RegisterCubit, RegisterState>(
         'does not emit loading when passwords do not match',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(
           email: 'user@example.com',
           password: 'validpassword',
@@ -211,8 +234,16 @@ void main() {
       );
 
       blocTest<RegisterCubit, RegisterState>(
-        'emits loading then success when all fields are valid',
-        build: RegisterCubit.new,
+        'emits loading then success when register succeeds',
+        build: () {
+          when(
+            () => mockRegisterUseCase.run(
+              email: any(named: 'email'),
+              password: any(named: 'password'),
+            ),
+          ).thenAnswer((_) async => tEntity);
+          return buildCubit();
+        },
         seed: () => const RegisterState(
           email: 'user@example.com',
           password: 'validpassword',
@@ -223,19 +254,50 @@ void main() {
           isA<RegisterState>().having(
             (s) => s.initStatus,
             'initStatus',
-            const BaseStatus.loading(),
+            const BaseStatus<dynamic>.loading(),
           ),
           isA<RegisterState>().having(
             (s) => s.initStatus,
             'initStatus',
-            const BaseStatus.success(),
+            const BaseStatus<dynamic>.success(),
+          ),
+        ],
+      );
+
+      blocTest<RegisterCubit, RegisterState>(
+        'emits loading then failure when register throws',
+        build: () {
+          when(
+            () => mockRegisterUseCase.run(
+              email: any(named: 'email'),
+              password: any(named: 'password'),
+            ),
+          ).thenThrow(const ResponseError.conflict());
+          return buildCubit();
+        },
+        seed: () => const RegisterState(
+          email: 'user@example.com',
+          password: 'validpassword',
+          confirmPassword: 'validpassword',
+        ),
+        act: (cubit) => cubit.onSubmit(),
+        expect: () => [
+          isA<RegisterState>().having(
+            (s) => s.initStatus,
+            'initStatus',
+            const BaseStatus<dynamic>.loading(),
+          ),
+          isA<RegisterState>().having(
+            (s) => s.initStatus.isFailure,
+            'isFailure',
+            true,
           ),
         ],
       );
 
       blocTest<RegisterCubit, RegisterState>(
         'does not emit when already loading',
-        build: RegisterCubit.new,
+        build: buildCubit,
         seed: () => const RegisterState(
           email: 'user@example.com',
           password: 'validpassword',

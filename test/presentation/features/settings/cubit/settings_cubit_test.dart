@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_template/domain/common/base_status/base_status.dart';
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/domain/usecases/todo/get_todo_use_case.dart';
 import 'package:flutter_template/presentation/features/settings/cubit/settings_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,7 +43,7 @@ void main() {
     blocTest<SettingsCubit, SettingsState>(
       'emits [loading, failure] when getTodo throws',
       build: () {
-        when(() => mockGetTodoUseCase.run()).thenThrow(Exception('error'));
+        when(() => mockGetTodoUseCase.run()).thenThrow(const ResponseError.unexpectedError());
         return SettingsCubit(mockGetTodoUseCase);
       },
       act: (cubit) => cubit.getTodo(),

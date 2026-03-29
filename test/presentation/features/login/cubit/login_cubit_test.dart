@@ -1,14 +1,34 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/domain/common/base_status/base_status.dart';
+import 'package:flutter_template/domain/entities/auth/auth_entity.dart';
+import 'package:flutter_template/domain/usecases/auth/login_use_case.dart';
 import 'package:flutter_template/presentation/features/login/cubit/login_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockLoginUseCase extends Mock implements LoginUseCase {}
 
 void main() {
+  late MockLoginUseCase mockLoginUseCase;
+
+  final tEntity = AuthEntity(
+    accessToken: 'access123',
+    refreshToken: 'refresh123',
+    expiresAt: DateTime(2030),
+  );
+
+  setUp(() {
+    mockLoginUseCase = MockLoginUseCase();
+  });
+
+  LoginCubit buildCubit() => LoginCubit(mockLoginUseCase);
+
   group('LoginCubit', () {
     group('onEmailChanged', () {
       blocTest<LoginCubit, LoginState>(
         'emits emailError when email is empty',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged(''),
         expect: () => [
           const LoginState(email: '', emailError: 'Email is required'),
@@ -17,7 +37,7 @@ void main() {
 
       blocTest<LoginCubit, LoginState>(
         'emits emailError when email is invalid',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged('notanemail'),
         expect: () => [
           const LoginState(
@@ -29,7 +49,7 @@ void main() {
 
       blocTest<LoginCubit, LoginState>(
         'emits null emailError when email is valid',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onEmailChanged('user@example.com'),
         expect: () => [
           const LoginState(email: 'user@example.com', emailError: null),
@@ -40,16 +60,19 @@ void main() {
     group('onPasswordChanged', () {
       blocTest<LoginCubit, LoginState>(
         'emits passwordError when password is empty',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged(''),
         expect: () => [
-          const LoginState(password: '', passwordError: 'Password is required'),
+          const LoginState(
+            password: '',
+            passwordError: 'Password is required',
+          ),
         ],
       );
 
       blocTest<LoginCubit, LoginState>(
         'emits passwordError when password is too short',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged('short'),
         expect: () => [
           const LoginState(
@@ -61,7 +84,7 @@ void main() {
 
       blocTest<LoginCubit, LoginState>(
         'emits null passwordError when password is valid',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onPasswordChanged('validpassword'),
         expect: () => [
           const LoginState(
@@ -75,7 +98,7 @@ void main() {
     group('onSubmit', () {
       blocTest<LoginCubit, LoginState>(
         'emits field errors and does not load when fields are untouched',
-        build: LoginCubit.new,
+        build: buildCubit,
         act: (cubit) => cubit.onSubmit(),
         expect: () => [
           // onEmailChanged('') emitted
@@ -93,16 +116,12 @@ void main() {
 
       blocTest<LoginCubit, LoginState>(
         'does not emit loading when email is invalid',
-        build: LoginCubit.new,
+        build: buildCubit,
         seed: () => const LoginState(
           email: 'bademail',
           password: 'validpassword',
         ),
         act: (cubit) => cubit.onSubmit(),
-        // onEmailChanged emits with emailError set.
-        // onPasswordChanged re-validates an already-valid password — state
-        // is identical to what was just emitted, so Freezed deduplicates it
-        // and no second emit occurs. Blocked before loading.
         expect: () => [
           isA<LoginState>().having(
             (s) => s.emailError,
@@ -114,15 +133,12 @@ void main() {
 
       blocTest<LoginCubit, LoginState>(
         'does not emit loading when password is too short',
-        build: LoginCubit.new,
+        build: buildCubit,
         seed: () => const LoginState(
           email: 'user@example.com',
           password: 'short',
         ),
         act: (cubit) => cubit.onSubmit(),
-        // onEmailChanged re-validates an already-valid email — same state,
-        // deduplicated. onPasswordChanged emits with passwordError set.
-        // Blocked before loading.
         expect: () => [
           isA<LoginState>().having(
             (s) => s.passwordError,
@@ -133,32 +149,68 @@ void main() {
       );
 
       blocTest<LoginCubit, LoginState>(
-        'emits loading then success when fields are valid',
-        build: LoginCubit.new,
+        'emits loading then success when login succeeds',
+        build: () {
+          when(
+            () => mockLoginUseCase.run(
+              email: any(named: 'email'),
+              password: any(named: 'password'),
+            ),
+          ).thenAnswer((_) async => tEntity);
+          return buildCubit();
+        },
         seed: () => const LoginState(
           email: 'user@example.com',
           password: 'validpassword',
         ),
         act: (cubit) => cubit.onSubmit(),
-        // Re-validation of already-valid seeded values produces identical
-        // state — deduplicated by Freezed. Only loading + success are emitted.
         expect: () => [
           isA<LoginState>().having(
             (s) => s.initStatus,
             'initStatus',
-            const BaseStatus.loading(),
+            const BaseStatus<dynamic>.loading(),
           ),
           isA<LoginState>().having(
             (s) => s.initStatus,
             'initStatus',
-            const BaseStatus.success(),
+            const BaseStatus<dynamic>.success(),
+          ),
+        ],
+      );
+
+      blocTest<LoginCubit, LoginState>(
+        'emits loading then failure when login throws',
+        build: () {
+          when(
+            () => mockLoginUseCase.run(
+              email: any(named: 'email'),
+              password: any(named: 'password'),
+            ),
+          ).thenThrow(const ResponseError.unauthorized());
+          return buildCubit();
+        },
+        seed: () => const LoginState(
+          email: 'user@example.com',
+          password: 'validpassword',
+        ),
+        act: (cubit) => cubit.onSubmit(),
+        expect: () => [
+          isA<LoginState>().having(
+            (s) => s.initStatus,
+            'initStatus',
+            const BaseStatus<dynamic>.loading(),
+          ),
+          isA<LoginState>().having(
+            (s) => s.initStatus.isFailure,
+            'isFailure',
+            true,
           ),
         ],
       );
 
       blocTest<LoginCubit, LoginState>(
         'does not emit when already loading',
-        build: LoginCubit.new,
+        build: buildCubit,
         seed: () => const LoginState(
           email: 'user@example.com',
           password: 'validpassword',

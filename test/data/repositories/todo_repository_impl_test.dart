@@ -1,4 +1,5 @@
 import 'package:flutter_template/data/remappers/todo_remapper.dart';
+import 'package:flutter_template/domain/common/errors/response_error.dart';
 import 'package:flutter_template/data/repositories/todo/todo_repository_impl.dart';
 import 'package:flutter_template/data/response_objects/todo_response/todo_response.dart';
 import 'package:flutter_template/data/services/todo/source/remote/todo_remote_data_source.dart';
@@ -46,10 +47,10 @@ void main() {
       verify(() => mockRemapper.toTodoEntity(tResponse)).called(1);
     });
 
-    test('throws exception on data source failure', () async {
+    test('throws ResponseError on data source failure', () async {
       when(() => mockRemoteDataSource.getTodo()).thenThrow(Exception('Network error'));
 
-      expect(() => sut.getTodo(), throwsException);
+      expect(() => sut.getTodo(), throwsA(isA<ResponseError>()));
     });
   });
 }
