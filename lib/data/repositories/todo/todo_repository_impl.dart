@@ -1,3 +1,4 @@
+import 'package:flutter_template/data/mappers/response_error_mapper.dart';
 import 'package:flutter_template/data/remappers/todo_remapper.dart';
 import 'package:flutter_template/data/services/todo/source/remote/todo_remote_data_source.dart';
 import 'package:flutter_template/domain/entities/todo/todo_entity.dart';
@@ -16,8 +17,11 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<TodoEntity> getTodo() async {
-    final response = await _todoRemoteDataSource.getTodo();
-    final todoEntity = _todoRemapper.toTodoEntity(response);
-    return todoEntity;
+    try {
+      final response = await _todoRemoteDataSource.getTodo();
+      return _todoRemapper.toTodoEntity(response);
+    } catch (e) {
+      throw mapToResponseError(e);
+    }
   }
 }

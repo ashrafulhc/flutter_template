@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _timer = Timer(const Duration(milliseconds: 1500), () {
-      context.go('${AppRoutes.main}/${AppRoutes.home}');
+      context.go(AppRoutes.login);
     });
   }
 

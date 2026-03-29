@@ -1,3 +1,5 @@
+import 'package:flutter_template/presentation/features/login/login_screen.dart';
+import 'package:flutter_template/presentation/features/register/register_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_template/presentation/features/_playground/playground_screen.dart';
 import 'package:flutter_template/presentation/features/home/home_page.dart';
@@ -11,6 +13,8 @@ abstract class AppRoutes {
   static const home = 'home';
   static const settings = 'settings';
   static const playground = '/playground';
+  static const login = '/login';
+  static const register = '/register';
 }
 
 final appRouter = GoRouter(
@@ -19,6 +23,14 @@ final appRouter = GoRouter(
     GoRoute(
       path: AppRoutes.splash,
       builder: (context, state) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.login,
+      builder: (context, state) => const LoginScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.register,
+      builder: (context, state) => const RegisterScreen(),
     ),
     ShellRoute(
       builder: (context, state, child) => MainScreen(body: child),
